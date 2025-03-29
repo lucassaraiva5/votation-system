@@ -23,7 +23,7 @@ class SendMessageToAllCompanies extends Command
             $number = $company->phone;
             $hash = $company->hash;
 
-            $url = "https://localhost:8000/vote/{$hash}";
+            $url = "https://votacao.ajudatche.com/vote/{$hash}";
             $messages = [];
             $messages[] = "Você foi convocado para uma votação do CDL. Representando a empresa {$company->name}. ATENÇÃO APÓS REALIZADO O VOTO, NÃO É POSSÍVEL ALTERA-LO. Para votar basta acessar o seguinte link:";
             $messages[] = $url;
