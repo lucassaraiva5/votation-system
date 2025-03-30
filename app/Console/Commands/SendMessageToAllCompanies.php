@@ -40,6 +40,7 @@ class SendMessageToAllCompanies extends Command
                     $ch = curl_init();
 
                     $host = env('WHATSAPP_API') . "/send";
+                    dd($host);
                     
                     curl_setopt($ch, CURLOPT_URL, $host);
                     curl_setopt($ch, CURLOPT_POST, 1);
