@@ -37,16 +37,37 @@ class SendMessageToAllCompanies extends Command
             try {
                 // Faz a requisição POST
                 foreach($messages as $message) {
-                    $response = Http::post(env('WHATSAPP_API') . "/send", [
+                    $ch = curl_init();
+
+                    $host = env('WHATSAPP_API') . "/send";
+                    
+                    curl_setopt($ch, CURLOPT_URL, $host);
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
                         'number'  => $number,
                         'message' => $message,
+                    ]));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'Content-Type: application/json'
                     ]);
-    
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                    $response = curl_exec($ch);
+
+                    if (curl_errno($ch)) {
+                        $this->error("cURL error: " . curl_error($ch));
+                        curl_close($ch);
+                        continue;
+                    }
+
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+
                     // Verifica se deu certo
-                    if ($response->successful()) {
+                    if ($httpCode >= 200 && $httpCode < 300) {
                         $this->info("Mensagem enviada para {$company->name} (Telefone: $number)");
                     } else {
-                        $this->error("Falha ao enviar para {$company->name} (Telefone: $number). Resposta: " . $response->body());
+                        $this->error("Falha ao enviar para {$company->name} (Telefone: $number). HTTP Code: $httpCode. Resposta: " . $response);
                     }
                 }
                 
