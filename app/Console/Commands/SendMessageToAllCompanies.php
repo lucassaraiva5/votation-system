@@ -37,7 +37,7 @@ class SendMessageToAllCompanies extends Command
             try {
                 // Faz a requisição POST
                 foreach($messages as $message) {
-                    $response = Http::post('http://localhost:3000/send', [
+                    $response = Http::post(env('WHATSAPP_API') . "/send", [
                         'number'  => $number,
                         'message' => $message,
                     ]);
